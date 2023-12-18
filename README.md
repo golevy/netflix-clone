@@ -1,6 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project that clones Netflix bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a [Next.js](https://nextjs.org/) project that clones Netflix.
 
-## Getting Started
+# Getting Started
 
 First, run the development server:
 
@@ -23,3 +23,12 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+# Reference
+
+- [React](https://react.dev/learn)
+- [Tailwind CSS](https://tailwindcss.com/docs/installation)
+- [Next.js](https://nextjs.org/) 
+- [Prisma](https://www.prisma.io/docs/getting-started/quickstart)
+- [MongoDB](https://www.mongodb.com/)
+- [NextAuth.js](https://next-auth.js.org/getting-started/example)
