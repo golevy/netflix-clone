@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org/) project that clones Netflix.
 
-# Getting Started
+## Getting Started
 
 First, run the development server:
 
@@ -16,7 +16,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-# Reference
+## Reference
 
 - [React](https://react.dev/learn)
 - [Tailwind CSS](https://tailwindcss.com/docs/installation)
