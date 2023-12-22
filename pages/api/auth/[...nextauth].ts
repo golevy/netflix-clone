@@ -1,10 +1,10 @@
 import { compare } from "bcrypt"
 import NextAuth from "next-auth/next"
-import Credentials from "next-auth/providers/credentials"
+import CredentialsProvider from "next-auth/providers/credentials"
 
 export default NextAuth({
   providers: [
-    Credentials({
+    CredentialsProvider({
       id: "credentials",
       name: "Credentials",
       credentials: {
