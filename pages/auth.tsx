@@ -19,14 +19,18 @@ const Auth = () => {
 
   const login = useCallback(async () => {
     try {
-      await signIn("credentials", {
+      const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
         callbackUrl: "/",
       })
 
-      router.push("/")
+      if (result?.error) {
+        console.error(result.error)
+      } else {
+        router.push("/")
+      }
     } catch (error) {
       console.log(error)
     }
