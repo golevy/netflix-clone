@@ -13,6 +13,8 @@ const Auth = () => {
   const [variant, setVariant] = useState("login")
   const router = useRouter()
 
+  const isLoginWithGoogleEnabled = false
+
   const toggleVariant = useCallback(() => {
     setVariant((currentVariant) =>
       currentVariant === "login" ? "register" : "login"
@@ -92,12 +94,14 @@ const Auth = () => {
               {variant === "login" ? "Login" : "Sign up"}
             </button>
             <div className="flex items-center gap-4 mt-8 justify-center">
-              <div
-                onClick={() => signIn("google", { callbackUrl: "/" })}
-                className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
-              >
-                <FcGoogle size={30} />
-              </div>
+              {isLoginWithGoogleEnabled && (
+                <div
+                  onClick={() => signIn("google", { callbackUrl: "/" })}
+                  className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+                >
+                  <FcGoogle size={30} />
+                </div>
+              )}
               <div
                 onClick={() => signIn("github", { callbackUrl: "/" })}
                 className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
