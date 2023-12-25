@@ -64,6 +64,7 @@ export default NextAuth({
   adapter: PrismaAdapter(prismadb),
   session: {
     strategy: "jwt",
+    maxAge: 2592000 * 3,
   },
   jwt: {
     secret: process.env.NEXTAUTH_JWT_SECRET,
