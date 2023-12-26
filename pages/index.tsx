@@ -1,5 +1,6 @@
 import { NextPageContext } from "next"
 import { getSession } from "next-auth/react"
+import Head from "next/head"
 import BillBoard from "~/components/BillBoard"
 import InfoModal from "~/components/InfoModal"
 import MovieList from "~/components/MovieList"
@@ -32,6 +33,11 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Netflix Clone | Home</title>
+        <meta name="description" content="Netflix Clone" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <InfoModal visible={isOpen} onClose={closeModal} />
       <Navbar />
       <BillBoard />
