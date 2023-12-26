@@ -1,5 +1,5 @@
-import axios from "axios"
-import React, { useCallback, useMemo } from "react"
+import axios, { AxiosResponse } from "axios"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { AiOutlineCheck, AiOutlinePlus } from "react-icons/ai"
 import useCurrentUser from "~/hooks/useCurrentUser"
 import useFavorites from "~/hooks/useFavorites"
@@ -11,32 +11,57 @@ interface FavoriteButtonProps {
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ movieId }) => {
   const { mutate: mutateFavorites } = useFavorites()
-  const { data: currentUser, mutate } = useCurrentUser()
+  const { data: currentUser, mutate: mutateUser } = useCurrentUser()
+  const [favoriteStatus, setFavoriteStatus] = useState(false)
 
-  const isFavorite = useMemo(() => {
-    const list = currentUser?.favorites || []
-
-    return list.includes(movieId)
-  }, [currentUser, movieId])
+  const isFavorite = useMemo(() => favoriteStatus, [favoriteStatus, movieId])
 
   const toggleFavorites = useCallback(async () => {
-    let response
+    try {
+      const userId = currentUser?.id
+      if (!userId) {
+        throw new Error("User ID is missing")
+      }
 
-    if (isFavorite) {
-      response = await axios.delete("/api/favorite", { data: movieId })
-    } else {
-      response = await axios.post("/api/favorite", { movieId })
+      let response: AxiosResponse<{ favoriteIds: string[] }>
+
+      if (isFavorite) {
+        response = await axios.delete("/api/favorite", {
+          data: { movieId, userId },
+        })
+      } else {
+        response = await axios.post("/api/favorite", { movieId, userId })
+      }
+
+      if (response?.data?.favoriteIds) {
+        mutateUser((currentUser: any) => ({
+          ...currentUser,
+          favorites: response.data.favoriteIds,
+        }))
+
+        mutateFavorites()
+      }
+    } catch (error) {
+      console.error("Error toggling favorites: ", error)
     }
 
-    const updatedFavoriteIds = response?.data?.favoriteIds
-
-    mutate({
-      ...currentUser,
-      favoriteIds: updatedFavoriteIds,
-    })
-
     mutateFavorites()
-  }, [movieId, isFavorite, currentUser, mutate, mutateFavorites])
+  }, [isFavorite, movieId, mutateFavorites, mutateUser, currentUser?.id])
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const response = await axios.get(
+          `/api/check-favorites?movieId=${movieId}`
+        )
+        setFavoriteStatus(response.data.isFavorite)
+      } catch (error) {
+        console.error("Error checking favorite status: ", error)
+      }
+    }
+
+    checkFavoriteStatus()
+  }, [movieId, toggleFavorites, currentUser?.id, isFavorite])
 
   const Icon = isFavorite ? AiOutlineCheck : AiOutlinePlus
 

@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { without } from "lodash"
 import prismadb from "~/lib/prismadb"
-import serverAuth from "~/lib/serverAuth"
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,38 +8,41 @@ export default async function handler(
 ) {
   try {
     if (req.method === "POST") {
-      const { currentUser } = await serverAuth(req)
+      const { movieId, userId } = req.body
 
-      const { movieId } = req.body
-
+      // Check Movie
       const existingMovie = await prismadb.movie.findUnique({
-        where: {
-          id: movieId,
-        },
+        where: { id: movieId },
       })
 
       if (!existingMovie) {
         throw new Error("Invalid ID")
       }
 
-      const user = await prismadb.user.update({
-        where: {
-          email: currentUser.email || "",
-        },
-        data: {
-          favoriteIds: {
-            push: movieId,
-          },
-        },
+      // Check User
+      const user = await prismadb.user.findUnique({
+        where: { id: userId },
       })
 
-      return res.status(200).json(user)
+      if (!user) {
+        throw new Error("User not found")
+      }
+
+      // Check Favorites
+      if (user.favoriteIds.includes(movieId)) {
+        return res.status(200).json(user)
+      }
+
+      const updatedUser = await prismadb.user.update({
+        where: { id: userId },
+        data: { favoriteIds: { push: movieId } },
+      })
+
+      return res.status(200).json(updatedUser)
     }
 
     if (req.method === "DELETE") {
-      const { currentUser } = await serverAuth(req)
-
-      const { movieId } = req.body
+      const { movieId, userId } = req.body
 
       const existingMovie = await prismadb.movie.findUnique({
         where: {
@@ -52,15 +54,19 @@ export default async function handler(
         throw new Error("Invalid ID")
       }
 
-      const updatedFavoriteIds = without(currentUser.favoriteIds, movieId)
+      const user = await prismadb.user.findUnique({
+        where: { id: userId },
+      })
+
+      if (!user) {
+        throw new Error("User not found")
+      }
+
+      const updatedFavoriteIds = without(user.favoriteIds, movieId)
 
       const updatedUser = await prismadb.user.update({
-        where: {
-          email: currentUser.email || "",
-        },
-        data: {
-          favoriteIds: updatedFavoriteIds,
-        },
+        where: { id: userId },
+        data: { favoriteIds: updatedFavoriteIds },
       })
       return res.status(200).json(updatedUser)
     }
