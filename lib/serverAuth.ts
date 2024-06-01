@@ -4,6 +4,7 @@ import prismadb from "~/lib/prismadb"
 
 const serverAuth = async (req: NextApiRequest) => {
   const session = await getSession({ req })
+  console.log("Session:", session)
 
   if (!session?.user?.email) {
     throw new Error("Missing Email")
@@ -14,6 +15,7 @@ const serverAuth = async (req: NextApiRequest) => {
       email: session.user.email,
     },
   })
+  console.log("Current User:", currentUser)
 
   if (!currentUser) {
     throw new Error("Not Sign in")
